@@ -61,5 +61,5 @@ Los tests cubren: partir la tarea, fallar un rol y reintentar, no deployar si fa
 ## Dónde vive el código
 
 - Local: `D:\Code\OriginRelay` (hermano de `D:\Code\AdministracionPropiedades`)
-- GitHub (si el remote existe): <https://github.com/balzanoa/OriginRelay>
+- GitHub: <https://github.com/balzanoa/OriginRelay> (`origin` → `main`)
 - No vive dentro del producto de propiedades ni en el perfil `balzanoa/balzanoa`.

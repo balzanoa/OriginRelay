@@ -1,15 +1,14 @@
 from origin_relay.models import Role
-from origin_relay.orchestrator import Orchestrator
 
 
-def test_si_un_rol_falla_lo_reintenta_y_sigue():
+def test_si_un_rol_falla_lo_reintenta_y_sigue(gate):
     calls: list[str] = []
 
     def programming(_subtask):
         calls.append("programming")
         return len(calls) >= 2
 
-    result = Orchestrator(
+    result = gate(
         runners={Role.PROGRAMMING: programming},
         max_attempts=2,
     ).run("Una sola pieza")
@@ -20,8 +19,8 @@ def test_si_un_rol_falla_lo_reintenta_y_sigue():
     assert result.deployed
 
 
-def test_si_el_rol_agota_reintentos_el_pipeline_queda_bloqueado():
-    result = Orchestrator(
+def test_si_el_rol_agota_reintentos_el_pipeline_queda_bloqueado(gate):
+    result = gate(
         runners={Role.PROGRAMMING: lambda _subtask: False},
         max_attempts=2,
     ).run("No implementable")
@@ -31,3 +30,8 @@ def test_si_el_rol_agota_reintentos_el_pipeline_queda_bloqueado():
     assert programming.status == "failed"
     assert result.deployed is False
     assert result.phase.value == "blocked"
+    assert all(
+        item.status == "skipped"
+        for item in result.subtasks
+        if item.role != Role.PROGRAMMING
+    )

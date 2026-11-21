@@ -12,7 +12,8 @@ def test_split_parte_lineas_en_subtareas_de_programacion():
         Role.PROGRAMMING,
         Role.TESTING,
         Role.SECURITY,
-        Role.DEPLOY,
+        Role.GITHUB,
+        Role.AZURE,
     }
 
 
@@ -21,11 +22,12 @@ def test_split_asigna_seguridad_al_pull_request_y_deploy_al_final():
 
     security = next(item for item in subtasks if item.role == Role.SECURITY)
     testing = next(item for item in subtasks if item.role == Role.TESTING)
-    deploys = [item for item in subtasks if item.role == Role.DEPLOY]
+    deploys = [item for item in subtasks if item.role in {Role.GITHUB, Role.AZURE}]
 
     assert security.phase == Phase.PULL_REQUEST
     assert testing.phase == Phase.PULL_REQUEST
     assert [item.id for item in deploys] == ["deploy-github", "deploy-azure"]
+    assert [item.role for item in deploys] == [Role.GITHUB, Role.AZURE]
     assert all(item.phase == Phase.DEPLOY for item in deploys)
 
 

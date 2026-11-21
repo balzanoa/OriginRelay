@@ -7,7 +7,10 @@ tarea
   → abrir pull request
   → pruebas unitarias/BDD  +  seguridad   (puertas del PR)
   → si ambas pasan: GitHub  →  Azure
-  → si alguna falla: reintentar el rol; sin deploy
+  → si programación falla: el resto queda skipped
+  → si GitHub falla: Azure queda skipped
+  → si Azure falla: deploy a medias, sin revertir commits
+  → si alguna puerta falla: reintentar el rol; sin deploy
 ```
 
 El grafo vive en `src/origin_relay/orchestrator.py`. Es un estado versionable y testeable, no un framework.

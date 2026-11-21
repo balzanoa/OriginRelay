@@ -10,16 +10,17 @@ v0: **código → pruebas → deploy**. Crece con el tiempo.
 
 Seguridad corre en **cada pull request**, no al final del proyecto ni después de publicar.
 
-Deploy: primero **GitHub** (historial y ramas para revertir), después **Azure**. Si Azure falla, se revierte desde GitHub.
+Deploy: primero **GitHub** (`git push` del historial, sin revertir commits), después **Azure** si `ORIGIN_RELAY_AZURE_DEPLOY` tiene un comando. Si Azure falla, GitHub queda publicado y el resultado dice que el deploy quedó a medias.
 
 ## Roles
 
 | Rol | Qué hace | Cuándo |
 | --- | --- | --- |
-| Programación | Implementa el cambio | Antes del PR |
-| Pruebas unitarias y BDD | BDD define el comportamiento; las unitarias lo verifican por dentro | En el PR. Sin verde, no hay deploy |
-| Seguridad | Revisión del cambio | En **cada** PR, no al final |
-| Deploy | GitHub y luego Azure | Solo si pruebas y seguridad pasaron |
+| Programación | Implementa el cambio. Sin agente, falla | Antes del PR |
+| Pruebas unitarias y BDD | Corre `pytest` en el repo de trabajo | En el PR. Sin verde, no hay deploy |
+| Seguridad | Corre Bandit. Si no está instalado, falla | En **cada** PR, no al final |
+| GitHub | Publica el historial | Después de pruebas y seguridad |
+| Azure | Publica el ambiente | Después de GitHub. Si falla, el deploy queda a medias |
 
 Detalle en [`docs/roles.md`](docs/roles.md) y [`docs/flujo.md`](docs/flujo.md).
 
@@ -50,7 +51,7 @@ python -m origin_relay "Login con correo" Logout
 
 Cada argumento es una subtarea de programación. Las comillas del shell conservan los espacios, así que `"Login con correo"` queda en una sola subtarea y `Logout` en otra.
 
-Los tests cubren: partir la tarea, que cada argumento de la CLI es una subtarea, fallar un rol y reintentar, no deployar si fallan las pruebas, y que la seguridad corre en el PR (no al final).
+Los tests cubren: partir la tarea, que cada argumento de la CLI es una subtarea, reintentar un rol, no deployar si fallan las pruebas o la seguridad, y el cableado (pytest, Bandit, GitHub y Azure).
 
 ## CI
 

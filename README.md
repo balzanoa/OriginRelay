@@ -45,11 +45,12 @@ Python 3.11+.
 ```bash
 python -m pip install -e ".[dev]"
 pytest
-python -m origin_relay "Login con correo
-Logout"
+python -m origin_relay "Login con correo" Logout
 ```
 
-Los tests cubren: partir la tarea, fallar un rol y reintentar, no deployar si fallan las pruebas, y que la seguridad corre en el PR (no al final).
+Cada argumento es una subtarea de programación. Las comillas del shell conservan los espacios, así que `"Login con correo"` queda en una sola subtarea y `Logout` en otra.
+
+Los tests cubren: partir la tarea, que cada argumento de la CLI es una subtarea, fallar un rol y reintentar, no deployar si fallan las pruebas, y que la seguridad corre en el PR (no al final).
 
 ## CI
 
